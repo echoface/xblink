@@ -1,0 +1,197 @@
+
+
+import("//build/config/features.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/config/ui.gni")
+import("//build/config/win/console_app.gni")
+import("//build/config/win/manifest.gni")
+#define enable_mojo_media
+import("//media/media_options.gni")
+import("//mojo/public/tools/bindings/mojom.gni")
+import("//ppapi/features/features.gni")
+import("//tools/grit/repack.gni")
+import("//tools/grit/grit_rule.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+} else if (is_mac) {
+  import("//build/config/mac/rules.gni")
+  import("//build/mac/tweak_info_plist.gni")
+  import("//third_party/icu/config.gni")
+  import("//v8/gni/v8.gni")
+} else if (is_win) {
+  import("//build/win/syzygy/syzygy.gni")
+}
+
+executable("Xblink") {
+  sources = [
+    "app/main.cc",
+  ]
+
+  configs += [
+    # TODO(jschuh): crbug.com/167187 fix size_t to int truncations.
+    "//build/config/compiler:no_size_t_to_int_warning",
+  ]
+
+  if (enable_mojo_media) {
+    #configs += [ "//media/mojo/services:mojo_media_config" ]
+  }
+
+  defines = [
+    #"CONTENT_SHELL_VERSION=\"$content_shell_version\""
+  ]
+
+  public_deps = [
+    # This exposes all public content APIs.
+    "//content/public/app:both",
+    "//content/public/browser",
+    "//content/public/common",
+    "//content/public/renderer",
+    "//content/public/utility",
+    "//ipc",
+  ]
+  deps = [
+    #":mojo_bindings",
+    #":resources",
+    "//base",
+    "//base:base_static",
+    "//base/third_party/dynamic_annotations",
+    "//cc",
+    "//components/cdm/renderer",
+    "//components/crash/content/app:app_breakpad_mac_win_to_be_deleted",
+    "//components/keyed_service/content",
+    "//components/plugins/renderer",
+    "//components/url_formatter",
+    "//components/web_cache/renderer",
+    "//content:resources",
+    "//content/app/resources",
+    "//content/app/strings",
+# this is content iternal api just use in content/ directory according to relative description, so ....
+#"//content/gpu",
+    "//content/public/common:service_names",
+    "//content/test:content_test_mojo_bindings",
+# just for test only using
+#"//content/test:layouttest_support",
+#"//content/test:test_support",
+    "//device/bluetooth",
+#"//device/bluetooth:mocks",
+    "//device/geolocation",
+    "//device/sensors/public/cpp:full",
+    "//gin",
+    "//gpu",
+    "//media",
+    "//media/capture",
+    "//mojo/edk/js",
+    "//net",
+    "//net:net_resources",
+    "//ppapi/features",
+    "//sandbox",
+    "//services/service_manager/public/cpp",
+    "//skia",
+    "//storage/browser",
+#"//testing/gmock",
+#"//testing/gtest",
+    "//third_party/WebKit/public:blink",
+    "//third_party/WebKit/public:features",
+    "//third_party/WebKit/public:image_resources",
+    "//third_party/WebKit/public:resources",
+#    "//third_party/WebKit/public:test_support",
+    "//third_party/icu",
+    "//ui/base",
+    "//ui/base/ime",
+    "//ui/display",
+    "//ui/events:events_base",
+    "//ui/gfx",
+    "//ui/gfx/geometry",
+    "//ui/gfx/ipc",
+    "//ui/gfx/ipc/geometry",
+    "//ui/gfx/ipc/skia",
+    "//ui/gl",
+    "//url",
+    "//v8",
+  ]
+
+  # Annoyingly, this target and layouttest_support have circular includes.
+  #allow_circular_includes_from = [ "//content/test:layouttest_support" ]
+
+  if (enable_plugins) {
+    deps += [
+      "//cc/paint",
+# same to //content/gpu
+#"//content/ppapi_plugin",
+      "//ppapi:blink_deprecated_test_plugin",
+      "//ppapi:blink_test_plugin",
+      "//ppapi/shared_impl",
+    ]
+  }
+  if (mojo_media_host == "browser") {
+    deps += [ "//media/mojo/services" ]
+  }
+
+  if (is_win) {
+    sources += [
+    ]
+  }
+
+  if (is_linux) {
+    deps += [
+      "//build/linux:fontconfig",
+#"//ui/gfx:test_support",
+    ]
+  }
+
+  if (use_x11) {
+    # Some tests rely on this tool at runtime. Note: it might be better if
+    # the tests that needed it had this as a dep instead of adding it here.
+    deps += [ "//ui/events/devices/x11" ]
+  }
+
+  if (is_android) {
+    sources += [
+    ]
+    deps += [
+    ]
+  }
+
+  if (is_posix && !is_mac) {
+    deps += [
+      "//components/crash/content/app",
+      "//components/crash/content/browser",
+    ]
+  }
+
+  if (use_aura) {
+    deps += [
+      "//services/navigation",
+      "//ui/aura",
+#      "//ui/aura:test_support",
+      "//ui/events",
+      "//ui/strings",
+      "//ui/wm",
+    ]
+
+    if (toolkit_views) {
+      sources += [
+      ]
+      deps += [
+        "//ui/resources",
+        "//ui/views",
+#"//ui/views:test_support",
+        "//ui/views/controls/webview",
+#"//ui/wm:test_support",
+      ]
+    } else {
+      sources += [
+      ]
+    }
+  }
+
+  if (is_linux) {
+    deps += [ "//third_party/freetype" ]
+  }
+
+  if (!enable_plugins) {
+    sources -= [
+    ]
+  }
+}
+
