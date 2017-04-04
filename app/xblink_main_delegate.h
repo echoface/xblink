@@ -39,7 +39,7 @@ public:
   static void InitializeResourceBundle();
 
 private:
-  //std::unique_ptr<content::ContentClient> content_client_;
+  std::unique_ptr<content::ContentClient> content_client_;
   /* XBTODO: enable follow late
   std::unique_ptr<XBContentUtilityClient> utility_client_;
   std::unique_ptr<XBContentBrowserClient> browser_client_;

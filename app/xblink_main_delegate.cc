@@ -1,5 +1,6 @@
 
 #include "xblink_main_delegate.h"
+#include "content_client_xb.h"
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
@@ -74,10 +75,8 @@ bool XBMainDelegate::BasicStartupComplete(int* exit_code) {
   //XBTODO:enable late
   //InitLogging();
 
-  //XBTODO: create content client here
-  //content_client_.reset(NULL);//new ShellContentClient);
-  //XBTODO: enable later
-  //SetContentClient(content_client_.get());
+  content_client_.reset(new XBContentClient());
+  SetContentClient(content_client_.get());
 
   return false;
 }
