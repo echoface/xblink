@@ -1,0 +1,19 @@
+# Build arguments go here.
+# See "gn args <out_dir> --list" for available build arguments.
+#
+
+
+# use release build
+is_debug = false
+
+# disable nacl , i don't need this
+enable_nacl = false
+
+# keep library static for more tiny size
+is_component_build = true
+
+# make build more more faster
+symbol_level = 0
+
+
+

@@ -25,6 +25,8 @@ if (is_android) {
 executable("Xblink") {
   sources = [
     "app/main.cc",
+    "app/xblink_main_delegate.h",
+    "app/xblink_main_delegate.cc",
   ]
 
   configs += [
