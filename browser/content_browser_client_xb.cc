@@ -2,6 +2,8 @@
 #include "content/public/browser/browser_main_parts.h"
 #include "storage/common/quota/quota_types.h"
 
+#include "xblink_engine_main_parts.h"
+
 
 namespace XB {
 
@@ -13,7 +15,7 @@ ContentBrowserClientXb::~ContentBrowserClientXb() {
 };
 
 content::BrowserMainParts* ContentBrowserClientXb::CreateBrowserMainParts(const content::MainFunctionParams& parameters) {
-  return new content::BrowserMainParts();
+  return new XblinkEngineMainParts(parameters);
 }
 
 bool ContentBrowserClientXb::IsHandledURL(const GURL& url) {

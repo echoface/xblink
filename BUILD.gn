@@ -31,6 +31,8 @@ executable("Xblink") {
     "app/content_client_xb.cc",
     "browser/content_browser_client_xb.h",
     "browser/content_browser_client_xb.cc",
+    "browser/xblink_engine_main_parts.h",
+    "browser/xblink_engine_main_parts.cc",
   ]
 
   configs += [
