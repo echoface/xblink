@@ -42,6 +42,7 @@
 #include "content/shell/renderer/shell_content_renderer_client.h"
 #include "content/shell/utility/shell_content_utility_client.h"
 */
+#include "../browser/content_browser_client_xb.h"
 
 namespace XB {
 /*
@@ -111,11 +112,13 @@ void XBMainDelegate::ZygoteForked() {
 #endif
 
 content::ContentBrowserClient* XBMainDelegate::CreateContentBrowserClient() {
-  return NULL;
+  return new ContentBrowserClientXb();
 }
+
 content::ContentRendererClient* XBMainDelegate::CreateContentRendererClient() {
   return NULL;
 }
+
 content::ContentUtilityClient* XBMainDelegate::CreateContentUtilityClient() {
   return NULL;
 }

@@ -12,7 +12,7 @@
 namespace XB {
 
 class XBContentClient : public content::ContentClient {
- public:
+public:
   XBContentClient();
   ~XBContentClient() override;
 
@@ -25,8 +25,9 @@ class XBContentClient : public content::ContentClient {
   bool IsSupplementarySiteIsolationModeEnabled() override;
   content::OriginTrialPolicy* GetOriginTrialPolicy() override;
 
- private:
+private:
   //content::OriginTrialPolicy origin_trial_policy_;
 };
+
 } //end of namespace
 #endif

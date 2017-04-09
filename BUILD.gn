@@ -29,6 +29,8 @@ executable("Xblink") {
     "app/xblink_main_delegate.cc",
     "app/content_client_xb.b",
     "app/content_client_xb.cc",
+    "browser/content_browser_client_xb.h",
+    "browser/content_browser_client_xb.cc",
   ]
 
   configs += [
