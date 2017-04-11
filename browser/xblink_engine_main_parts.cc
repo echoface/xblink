@@ -1,5 +1,5 @@
 #include "xblink_engine_main_parts.h"
-
+#include "xblink_engine_context.h"
 
 #include "device/bluetooth/bluetooth_adapter_factory.h"
 #include "device/geolocation/geolocation_delegate.h"
@@ -85,8 +85,7 @@ void XblinkEngineMainParts::PostDestroyThreads() {
 
 void XblinkEngineMainParts::InitializeBrowserContexts() {
   printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
-  //browser_context_.reset();
-  //set_browser_context(new ShellBrowserContext(false, net_log_.get()));
+  browser_context_.reset(new XblinkEngineContext(false, NULL/*net_log_.get()*/));
 }
 
 void XblinkEngineMainParts::InitializeMessageLoopContext() {

@@ -14,6 +14,12 @@
 
 //#include "content/shell/common/shell_switches.h"
 //#include "content/shell/grit/shell_resources.h"
+namespace content {
+std::string GetShellUserAgent() {
+  return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36";
+}
+} //end namespace content
+
 namespace XB {
 
 XBContentClient::XBContentClient() {}
@@ -21,7 +27,7 @@ XBContentClient::XBContentClient() {}
 XBContentClient::~XBContentClient() {}
 
 std::string XBContentClient::GetUserAgent() const {
-  return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36";
+  return content::GetShellUserAgent();
 }
 
 base::string16 XBContentClient::GetLocalizedString(int message_id) const {

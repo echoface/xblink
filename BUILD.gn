@@ -1,10 +1,10 @@
 
-
 import("//build/config/features.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build/config/ui.gni")
 import("//build/config/win/console_app.gni")
 import("//build/config/win/manifest.gni")
+
 #define enable_mojo_media
 import("//media/media_options.gni")
 import("//mojo/public/tools/bindings/mojom.gni")
@@ -33,6 +33,20 @@ executable("Xblink") {
     "browser/content_browser_client_xb.cc",
     "browser/xblink_engine_main_parts.h",
     "browser/xblink_engine_main_parts.cc",
+    "browser/xblink_engine_context.h",
+    "browser/xblink_engine_context.cc",
+
+    # content shell file
+    "//content/shell/browser/shell_permission_manager.h",
+    "//content/shell/browser/shell_permission_manager.cc",
+    "//content/shell/browser/shell_quota_permission_context.h",
+    "//content/shell/browser/shell_quota_permission_context.cc",
+    "//content/shell/browser/shell_download_manager_delegate.h",
+    "//content/shell/browser/shell_download_manager_delegate.cc",
+    "//content/shell/browser/shell_url_request_context_getter.h",
+    "//content/shell/browser/shell_url_request_context_getter.cc",
+    "//content/shell/browser/shell_network_delegate.h",
+    "//content/shell/browser/shell_network_delegate.cc",
   ]
 
   configs += [
@@ -73,15 +87,9 @@ executable("Xblink") {
     "//content:resources",
     "//content/app/resources",
     "//content/app/strings",
-# this is content iternal api just use in content/ directory according to relative description, so ....
-#"//content/gpu",
     "//content/public/common:service_names",
     "//content/test:content_test_mojo_bindings",
-# just for test only using
-#"//content/test:layouttest_support",
-#"//content/test:test_support",
     "//device/bluetooth",
-#"//device/bluetooth:mocks",
     "//device/geolocation",
     "//device/sensors/public/cpp:full",
     "//gin",
@@ -96,13 +104,10 @@ executable("Xblink") {
     "//services/service_manager/public/cpp",
     "//skia",
     "//storage/browser",
-#"//testing/gmock",
-#"//testing/gtest",
     "//third_party/WebKit/public:blink",
     "//third_party/WebKit/public:features",
     "//third_party/WebKit/public:image_resources",
     "//third_party/WebKit/public:resources",
-#    "//third_party/WebKit/public:test_support",
     "//third_party/icu",
     "//ui/base",
     "//ui/base/ime",
@@ -118,14 +123,9 @@ executable("Xblink") {
     "//v8",
   ]
 
-  # Annoyingly, this target and layouttest_support have circular includes.
-  #allow_circular_includes_from = [ "//content/test:layouttest_support" ]
-
   if (enable_plugins) {
     deps += [
       "//cc/paint",
-# same to //content/gpu
-#"//content/ppapi_plugin",
       "//ppapi:blink_deprecated_test_plugin",
       "//ppapi:blink_test_plugin",
       "//ppapi/shared_impl",
@@ -143,7 +143,6 @@ executable("Xblink") {
   if (is_linux) {
     deps += [
       "//build/linux:fontconfig",
-#"//ui/gfx:test_support",
     ]
   }
 
@@ -171,7 +170,6 @@ executable("Xblink") {
     deps += [
       "//services/navigation",
       "//ui/aura",
-#      "//ui/aura:test_support",
       "//ui/events",
       "//ui/strings",
       "//ui/wm",
@@ -183,9 +181,7 @@ executable("Xblink") {
       deps += [
         "//ui/resources",
         "//ui/views",
-#"//ui/views:test_support",
         "//ui/views/controls/webview",
-#"//ui/wm:test_support",
       ]
     } else {
       sources += [
