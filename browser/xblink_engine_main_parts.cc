@@ -12,6 +12,17 @@
 #if defined(USE_AURA) && defined(USE_X11)
 #include "ui/events/devices/x11/touch_factory_x11.h"  // nogncheck
 #endif
+
+#include "ui/engine_window.h"
+#include "ui/display/screen.h"
+
+#include "ui/views/test/desktop_test_views_delegate.h"
+#include "ui/views/widget/desktop_aura/desktop_screen.h"
+
+#if defined(USE_AURA)
+#include "ui/wm/core/wm_state.h"
+#endif
+
 namespace XB {
 
 XblinkEngineMainParts::XblinkEngineMainParts(const content::MainFunctionParams& parameters)
@@ -51,6 +62,15 @@ void XblinkEngineMainParts::PreMainMessageLoopRun() {
   printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
   //net_log_.reset(new ShellNetLog("content_shell"));
   InitializeBrowserContexts();
+
+#if defined(USE_AURA)
+  new wm::WMState;
+#endif
+  display::Screen::SetScreenInstance(views::CreateDesktopScreen());
+  new views::DesktopTestViewsDelegate();
+
+  new EngineWindow();
+  //new EngineWindow
   //device::GeolocationProvider::SetGeolocationDelegate(new ShellGeolocationDelegate(browser_context()));
   //Shell::Initialize();
   //net::NetModule::SetResourceProvider(PlatformResourceProvider);

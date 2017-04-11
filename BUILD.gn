@@ -35,6 +35,8 @@ executable("Xblink") {
     "browser/xblink_engine_main_parts.cc",
     "browser/xblink_engine_context.h",
     "browser/xblink_engine_context.cc",
+    "browser/ui/engine_window.h",
+    "browser/ui/engine_window.cc",
 
     # content shell file
     "//content/shell/browser/shell_permission_manager.h",
