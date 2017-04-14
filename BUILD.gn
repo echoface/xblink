@@ -49,6 +49,9 @@ executable("Xblink") {
     "//content/shell/browser/shell_url_request_context_getter.cc",
     "//content/shell/browser/shell_network_delegate.h",
     "//content/shell/browser/shell_network_delegate.cc",
+    "//ui/views/test/test_views_delegate_aura.cc",
+    "//ui/views/test/desktop_test_views_delegate_aura.cc",
+    "//ui/views/test/desktop_test_views_delegate.h",
   ]
 
   configs += [

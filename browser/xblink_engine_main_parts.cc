@@ -18,6 +18,7 @@
 
 #include "ui/views/test/desktop_test_views_delegate.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
+#include "ui/base/ime/input_method_initializer.h"
 
 #if defined(USE_AURA)
 #include "ui/wm/core/wm_state.h"
@@ -36,6 +37,8 @@ XblinkEngineMainParts::~XblinkEngineMainParts() {
 
 void XblinkEngineMainParts::PreEarlyInitialization() {
   printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
+  //this is very important, without this will crash
+  ui::InitializeInputMethodForTesting();
 }
 
 #if defined(OS_ANDROID)
