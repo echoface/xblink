@@ -22,6 +22,7 @@ public:
   XBMainDelegate();
   ~XBMainDelegate() override;
 
+  static XBMainDelegate* Get();
   // ContentMainDelegate implementation:
   void PreSandboxStartup() override;
   bool BasicStartupComplete(int* exit_code) override;
@@ -38,6 +39,9 @@ public:
 
   static void InitializeResourceBundle();
 
+  content::ContentClient* content_client() {
+    return content_client_.get();
+  }
 private:
   std::unique_ptr<content::ContentClient> content_client_;
   /* XBTODO: enable follow late

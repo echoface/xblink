@@ -3,6 +3,12 @@
 
 #include "ui/views/widget/widget_delegate.h"
 #include "base/timer/timer.h"
+#include "views/boom_bar_view.h"
+#include <iostream>
+
+namespace views {
+  class WebView;
+}
 
 namespace XB {
 
@@ -26,9 +32,14 @@ public:
 private:
   void timer_shot();
   base::RepeatingTimer timer_;
+
+  views::WebView* web_view_;
+
   View* child_view_;
   View* circle_button_;
+  BoomBarView* boom_bar_;
   views::Widget* window_widget_;
+  views::View* uri_input_view_;
 };
 
 } //end namespace XB

@@ -50,9 +50,17 @@ base::LazyInstance<content::ShellCrashReporterClient>::Leaky
     g_shell_crash_client = LAZY_INSTANCE_INITIALIZER;
     */
 
+static XBMainDelegate* g_app_delegate = NULL;
+
+XBMainDelegate* XBMainDelegate::Get() {
+  return g_app_delegate;
+}
+
 XBMainDelegate::XBMainDelegate() {
+  g_app_delegate = this;
 }
 XBMainDelegate::~XBMainDelegate() {
+  g_app_delegate = NULL;
 }
 
   // ContentMainDelegate implementation:

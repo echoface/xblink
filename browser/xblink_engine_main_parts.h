@@ -17,6 +17,7 @@ public:
   explicit XblinkEngineMainParts(const content::MainFunctionParams& parameters);
   ~XblinkEngineMainParts() override;
 
+  static XblinkEngineMainParts* Get();
   // BrowserMainParts overrides.
   void PreEarlyInitialization() override;
 #if defined(OS_ANDROID)

@@ -23,13 +23,18 @@
 #if defined(USE_AURA)
 #include "ui/wm/core/wm_state.h"
 #endif
-
 namespace XB {
 
+static XblinkEngineMainParts* g_main_parts = NULL;
+
+XblinkEngineMainParts* XblinkEngineMainParts::Get() {
+  return g_main_parts;
+}
 XblinkEngineMainParts::XblinkEngineMainParts(const content::MainFunctionParams& parameters)
   : parameters_(parameters),
     run_message_loop_(true) {
   printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
+  g_main_parts = this;
 }
 
 XblinkEngineMainParts::~XblinkEngineMainParts() {
