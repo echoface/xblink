@@ -40,6 +40,9 @@ executable("Xblink") {
     "browser/ui/views/boom_bar_view.h",
     "browser/ui/views/boom_bar_view.cc",
 
+    "views/operation_panel/operation_panel.h",
+    "views/operation_panel/operation_panel.cc",
+
     # content shell file
     "//content/shell/browser/shell_permission_manager.h",
     "//content/shell/browser/shell_permission_manager.cc",
@@ -186,8 +189,8 @@ executable("Xblink") {
       sources += [
       ]
       deps += [
-        "//ui/resources",
         "//ui/views",
+        "//ui/resources",
         "//ui/views/controls/webview",
       ]
     } else {

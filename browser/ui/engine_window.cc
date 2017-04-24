@@ -3,18 +3,33 @@
 
 #include "ui/views/widget/widget.h"
 #include "ui/views/controls/webview/webview.h"
+#include "ui/events/platform/platform_event_source.h"
 
 #include "Xblink/app/xblink_main_delegate.h"
 #include "Xblink/browser/xblink_engine_main_parts.h"
 
+#include "Xblink/views/operation_panel/operation_panel.h"
+
+#include <X11/extensions/shape.h>
+#include <X11/extensions/XInput2.h>
+#include <X11/Xatom.h>
+#include <X11/Xregion.h>
+#include <X11/Xutil.h>
+
 
 namespace XB {
 EngineWindow::EngineWindow() : window_widget_(NULL) {
+  operation_panel_ = NULL;
+
+  /*
+  overlay_view_ = new View();
+  overlay_view_->set_background(views::Background::CreateSolidBackground(0x5500FF90));
+  */
 
   content::BrowserContext* browser_context = XblinkEngineMainParts::Get()->browser_context();
   web_view_ = new views::WebView(browser_context);
   AddChildView(web_view_);
-
+  /*
   child_view_ = new View();
   child_view_->set_background(views::Background::CreateSolidBackground(0xffff0090));
   AddChildView(child_view_);
@@ -23,12 +38,7 @@ EngineWindow::EngineWindow() : window_widget_(NULL) {
   circle_button_->set_background(views::Background::CreateSolidBackground(0xff0000ff));
   AddChildView(circle_button_);
 
-  boom_bar_ = new BoomBarView();
-  AddChildView(boom_bar_);
-
-  uri_input_view_ = new View();
-  uri_input_view_->set_background(views::Background::CreateSolidBackground(0xAAff4c00));
-  AddChildView(uri_input_view_);
+  */
 
   window_widget_ = new views::Widget;
   views::Widget::InitParams params;
@@ -39,30 +49,61 @@ EngineWindow::EngineWindow() : window_widget_(NULL) {
   params.wm_class_name = params.wm_class_class;
   window_widget_->Init(params);
 
-  //window_ = window_widget_->GetNativeWindow();
-  // Call ShowRootWindow on RootWindow created by WMTestHelper without
-  // which XWindow owned by RootWindow doesn't get mapped.
-  //window_->GetHost()->Show();
-  set_background(views::Background::CreateSolidBackground(0xFFe0eee8));
-
   window_widget_->Show();
+  //InitAccelerators();
 
   timer_.Start(FROM_HERE, base::TimeDelta::FromSeconds(4), this, &EngineWindow::timer_shot);
-//       timer_.Start(FROM_HERE, TimeDelta::FromSeconds(1),
-//                    this, &MyClass::DoStuff);
-//     }
 
-  GURL url("http://www.apple.com/");
+  GURL url("http://www.wiki.org");
   web_view_->LoadInitialURL(url);
+
+  operation_panel_ = new OperationPanel(window_widget_);
+  operation_panel_->InitPanel();
+
+  if (ui::PlatformEventSource::GetInstance()) {
+    printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "add event thing", 0);
+    ui::PlatformEventSource::GetInstance()->AddPlatformEventObserver(this);
+  }
 }
+
 void EngineWindow::timer_shot() {
-  child_view_->SetVisible(!child_view_->visible());
-  web_view_->SetVisible(!child_view_->visible());
-  //boom_bar_->SetVisible(!boom_bar_->visible());
+  //child_view_->SetVisible(!child_view_->visible());
 }
 
 EngineWindow::~EngineWindow() {
   window_widget_ = NULL;
+}
+
+void EngineWindow::InitAccelerators() {
+  const ui::KeyboardCode keys[] = { ui::VKEY_F5,
+                                    ui::VKEY_W,
+                                    ui::VKEY_A,
+                                    ui::VKEY_S,
+                                    ui::VKEY_D};
+
+  for (size_t i = 0; i < arraysize(keys); ++i) {
+    GetFocusManager()->RegisterAccelerator(ui::Accelerator(keys[i], ui::EF_NONE),
+                                           ui::AcceleratorManager::kNormalPriority,
+                                           this);
+  }
+}
+bool EngineWindow::AcceleratorPressed(const ui::Accelerator& accelerator) {
+  switch (accelerator.key_code()) {
+  case ui::VKEY_F5:
+    if (operation_panel_)
+      operation_panel_->IsVisible() ? operation_panel_->Hide() : operation_panel_->Show();
+    return true;
+  case ui::VKEY_W:
+    return true;
+  case ui::VKEY_A:
+    return true;
+  case ui::VKEY_S:
+    return true;
+  case ui::VKEY_D:
+    return true;
+  default:
+    return views::WidgetDelegateView::AcceleratorPressed(accelerator);
+  }
 }
 
   // WidgetDelegate:
@@ -84,9 +125,8 @@ const char* EngineWindow::GetClassName() const {
 }
 
 void EngineWindow::OnBoundsChanged(const gfx::Rect& previous_bounds) {
-  printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
   web_view_->SetBoundsRect(bounds());
-
+  /*
   child_view_->SetBounds(0, 0, 300, bounds().height());
 
   //circle_button_->SetSize(gfx::Size(32, 32));
@@ -95,13 +135,32 @@ void EngineWindow::OnBoundsChanged(const gfx::Rect& previous_bounds) {
   gfx::Rect rect(32, 32);
   rect.set_origin(p);
   circle_button_->SetBoundsRect(rect);
-  boom_bar_->SetBounds(bounds().width()/2 - bounds().width()/4, bounds().height()/2 - 128, bounds().width()/2, 96);
-  uri_input_view_->SetBounds(0, 0, width(), 32);
+  */
+  if (operation_panel_)
+    operation_panel_->Resize(bounds());
 }
 
 void EngineWindow::Layout() {
-  printf("\n\x1b[31m==%s %s <<%s>> [%d]====\x1b[0m", __FILE__, __FUNCTION__, "", 0);
   View::Layout();
+}
+
+views::View* EngineWindow::CreateOverlayView() {
+  return NULL;//return overlay_view_;
+}
+void EngineWindow::WillProcessEvent(const ui::PlatformEvent& event) {
+  XEvent* xev = event;
+  if (xev->type == KeyPress || xev->type == KeyRelease) {
+    ui::KeyEvent keyevent(xev);
+    if (keyevent.key_code() == ui::VKEY_F5 && keyevent.type() == ui::ET_KEY_PRESSED) {
+      if (operation_panel_->IsVisible())
+        operation_panel_->Hide();
+      else
+        operation_panel_->Show();
+    }
+  }
+}
+
+void EngineWindow::DidProcessEvent(const ui::PlatformEvent& event) {
 }
 
 } //end of namespace

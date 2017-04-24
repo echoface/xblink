@@ -1,10 +1,12 @@
 #ifndef XBLINK_ENGINE_WINDOW_H
 #define XBLINK_ENGINE_WINDOW_H
 
-#include "ui/views/widget/widget_delegate.h"
+#include <iostream>
 #include "base/timer/timer.h"
 #include "views/boom_bar_view.h"
-#include <iostream>
+#include "ui/views/widget/widget_delegate.h"
+#include "ui/events/platform/platform_event_observer.h"
+//#include "ui/events/platform/platform_event_dispatcher.h"
 
 namespace views {
   class WebView;
@@ -12,7 +14,10 @@ namespace views {
 
 namespace XB {
 
-class EngineWindow : public views::WidgetDelegateView {
+class OperationPanel;
+
+class EngineWindow : public views::WidgetDelegateView,
+                     public ui::PlatformEventObserver {
 public:
   EngineWindow();
   ~EngineWindow() override;
@@ -25,21 +30,29 @@ public:
 
   // View:
   const char* GetClassName() const override;
+  bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
 
   void Layout() override;
   void OnBoundsChanged(const gfx::Rect& previous_bounds) override;
 
+  // widget delegate
+  View* CreateOverlayView() override;
+
+  void WillProcessEvent(const ui::PlatformEvent& event) override;
+  void DidProcessEvent(const ui::PlatformEvent& event) override;
 private:
+  void InitAccelerators();
   void timer_shot();
   base::RepeatingTimer timer_;
 
   views::WebView* web_view_;
 
-  View* child_view_;
-  View* circle_button_;
-  BoomBarView* boom_bar_;
+  //View* child_view_;
+  //View* circle_button_;
   views::Widget* window_widget_;
-  views::View* uri_input_view_;
+
+  //views::View* overlay_view_;
+  OperationPanel* operation_panel_;
 };
 
 } //end namespace XB
